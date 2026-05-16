@@ -10,9 +10,11 @@
     enabled: yes
     state: started
 
-- name: Deploy index.html
+- name: Deploy PHP index file
   ansible.builtin.template:
-    src: index.html.j2
-    dest: /usr/share/nginx/html/index.html
+    src: ../../../app/src/index.php
+    dest: /var/www/html/index.php
+    owner: nginx
+    group: nginx
     mode: "0644"
-  notify: restart nginx
+  
