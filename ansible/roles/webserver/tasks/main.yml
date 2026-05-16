@@ -1,0 +1,18 @@
+---
+- name: Install NGINX
+  ansible.builtin.yum:
+    name: nginx
+    state: present
+
+- name: Enable & Start NGINX
+  ansible.builtin.service:
+    name: nginx
+    enabled: yes
+    state: started
+
+- name: Deploy index.html
+  ansible.builtin.template:
+    src: index.html.j2
+    dest: /usr/share/nginx/html/index.html
+    mode: "0644"
+  notify: restart nginx
