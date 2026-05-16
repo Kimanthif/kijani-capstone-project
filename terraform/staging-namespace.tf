@@ -1,5 +1,5 @@
-resource "kubernetes_namespace" "staging" {
-  metadata {
-    name = "kijani-staging"
-  }
-}
+# resource "kubernetes_namespace" "staging" {
+#   metadata {
+#     name = "kijani-staging"
+#   }
+# }
