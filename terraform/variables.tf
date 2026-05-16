@@ -19,5 +19,5 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  default = "kijani-key"
+  default = "kijanikiosk-key"
 }
