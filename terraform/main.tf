@@ -118,11 +118,11 @@ resource "aws_security_group" "web_sg" {
 # EC2 INSTANCE
 ##################################
 resource "aws_instance" "web" {
-  ami                    = "ami-0937a9580e7ff94a6"
+  ami                    = "ami-0012a9058b88db000"
   instance_type          = "t3.micro"
   subnet_id              = aws_subnet.public1.id
   vpc_security_group_ids = [aws_security_group.web_sg.id]
-  key_name               = var.key_name
+  key_name               = "kijani-key"
 
   user_data = file("userdata.sh")
 
