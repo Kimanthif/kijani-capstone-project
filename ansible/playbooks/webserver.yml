@@ -1,0 +1,7 @@
+---
+- name: Configure NGINX Webserver
+  hosts: "{{ target_env }}"
+  become: yes
+
+  roles:
+    - webserver
