@@ -131,3 +131,16 @@ resource "aws_instance" "web" {
   }
 }
 
+################################
+#   KUBERNETES (PRODUCTION)
+################################
+
+# provider "kubernetes" {
+#   config_path = "~/.kube/config"
+# }
+
+# resource "kubernetes_namespace" "production" {
+#   metadata {
+#     name = "kijani-production"
+#   }
+# }
