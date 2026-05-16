@@ -1,0 +1,1 @@
+staging-ansible ansible_host=51.21.224.21 ansible_user=ec2-user ansible_ssh_private_key_file=~/.ssh/kijanikiosk-key.pem ansible_ssh_common_args='-o IdentitiesOnly=yes -o StrictHostKeyChecking=no'

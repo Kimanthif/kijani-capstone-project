@@ -1,6 +1,12 @@
-##############################
-#   AWS NETWORKING LAYER
-##############################
+##################################
+# DATA SOURCES
+##################################
+
+data "aws_availability_zones" "available" {}
+
+##################################
+# NETWORKING LAYER (VPC)
+##################################
 
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
@@ -18,10 +24,14 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
+##################################
+# SUBNETS (FIXED AZ ISSUE)
+##################################
+
 resource "aws_subnet" "public1" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
-  availability_zone       = "eu-north-1a"
+  availability_zone       = data.aws_availability_zones.available.names[0]
   map_public_ip_on_launch = true
 
   tags = {
@@ -32,13 +42,17 @@ resource "aws_subnet" "public1" {
 resource "aws_subnet" "public2" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.2.0/24"
-  availability_zone       = "eu-north-1b"
+  availability_zone       = data.aws_availability_zones.available.names[1]
   map_public_ip_on_launch = true
 
   tags = {
     Name = "kijani-public2"
   }
 }
+
+##################################
+# ROUTING
+##################################
 
 resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.main.id
@@ -63,9 +77,9 @@ resource "aws_route_table_association" "public2_assoc" {
   route_table_id = aws_route_table.public_rt.id
 }
 
-##############################
-#   EC2 INSTANCE (OPTIONAL)
-##############################
+##################################
+# SECURITY GROUP
+##################################
 
 resource "aws_security_group" "web_sg" {
   name        = "kijani-web-sg"
@@ -100,12 +114,15 @@ resource "aws_security_group" "web_sg" {
   }
 }
 
+##################################
+# EC2 INSTANCE
+##################################
 resource "aws_instance" "web" {
   ami                    = "ami-0012a9058b88db000"
   instance_type          = "t3.micro"
   subnet_id              = aws_subnet.public1.id
   vpc_security_group_ids = [aws_security_group.web_sg.id]
-  key_name               = var.key_name
+  key_name               = "kijani-key"
 
   user_data = file("userdata.sh")
 

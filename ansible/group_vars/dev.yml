@@ -1,0 +1,5 @@
+replicas: 1
+log_level: DEBUG
+environment: dev
+db_host: dev-db.internal
+s3_bucket: kijani-dev-bucket

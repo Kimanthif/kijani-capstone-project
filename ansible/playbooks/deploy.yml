@@ -1,0 +1,5 @@
+- hosts: ansible_controller
+  become: yes
+  roles:
+    - configmaps
+    - app_deploy
