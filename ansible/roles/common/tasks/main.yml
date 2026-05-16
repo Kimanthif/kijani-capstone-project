@@ -1,13 +1,76 @@
-- name: Update apt cache
-  apt:
-    update_cache: yes
-    cache_valid_time: 3600
+---
+# COMMON ROLE - BASE SYSTEM SETUP
 
-- name: Install base tools
-  apt:
+- name: Gather system facts
+  ansible.builtin.setup:
+
+# ---------------------------
+# UPDATE SYSTEM PACKAGES
+# ---------------------------
+
+- name: Update packages (Amazon Linux / RHEL)
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+    update_cache: yes
+  when: ansible_os_family == "RedHat"
+
+- name: Update packages (Ubuntu/Debian fallback)
+  ansible.builtin.apt:
+    update_cache: yes
+    upgrade: dist
+  when: ansible_os_family == "Debian"
+
+# ---------------------------
+# BASIC TOOLS INSTALLATION
+# ---------------------------
+
+- name: Install common utilities (Amazon Linux / RHEL)
+  ansible.builtin.dnf:
+    name:
+      - wget
+      - git
+      - unzip
+      - vim
+    state: present
+  when: ansible_os_family == "RedHat"
+
+- name: Install common utilities (Ubuntu/Debian)
+  ansible.builtin.apt:
     name:
       - curl
-      - unzip
+      - wget
       - git
-      - python3-pip
+      - unzip
+      - tar
     state: present
+  when: ansible_os_family == "Debian"
+
+# ---------------------------
+# TIMEZONE SETUP (OPTIONAL BUT GOOD PRACTICE)
+# ---------------------------
+
+- name: Set timezone to UTC
+  ansible.builtin.timezone:
+    name: UTC
+
+# ---------------------------
+# BASIC SECURITY HARDENING (LIGHTWEIGHT)
+# ---------------------------
+
+- name: Disable root SSH login (safe baseline)
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^PermitRootLogin"
+    line: "PermitRootLogin no"
+    state: present
+  notify: restart ssh
+
+# ---------------------------
+# CLEANUP
+# ---------------------------
+
+- name: Clean package cache (Amazon Linux)
+  ansible.builtin.dnf:
+    autoremove: yes
+  when: ansible_os_family == "RedHat"
