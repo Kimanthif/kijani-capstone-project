@@ -19,5 +19,5 @@ variable "instance_type" {
 }
 
 variable "key_name" {
-  description = "EC2 keypair name"
+  default = "kijani-key"
 }
