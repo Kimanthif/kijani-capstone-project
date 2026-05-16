@@ -1,0 +1,13 @@
+- name: Apply ConfigMap
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: kijani-config
+        namespace: "{{ namespace }}"
+      data:
+        LOG_LEVEL: "{{ log_level }}"
+        DB_HOST: "{{ db_host }}"
+        S3_BUCKET: "{{ s3_bucket }}"
