@@ -10,7 +10,10 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t kijani-php-nginx .'
+                sh '''
+                cd kijani-php-nginx
+                docker build -t kijani-php-nginx .
+                '''
             }
         }
 
