@@ -2,10 +2,9 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "kijani-php-nginx"
-        IMAGE_TAG  = "latest"
-        DOCKERHUB_USER = "felistus"
-        DOCKER_DIR = "backend-platform"
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
+        IMAGE_NAME = "kimanthif/kijani-php-nginx"
+        APP_DIR = "kijani-php-nginx"   
     }
 
     stages {
@@ -21,8 +20,8 @@ pipeline {
             steps {
                 echo "Building Docker image..."
                 sh """
-                    cd ${DOCKER_DIR}
-                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                    cd ${APP_DIR}
+                    docker build -t ${IMAGE_NAME}:latest .
                 """
             }
         }
@@ -31,8 +30,7 @@ pipeline {
             steps {
                 echo "Running test container..."
                 sh """
-                    docker rm -f test-${IMAGE_NAME} 2>/dev/null || true
-                    docker run -d --name test-${IMAGE_NAME} -p 8081:80 ${IMAGE_NAME}:${IMAGE_TAG}
+                    docker run -d --name test-kijani -p 8081:80 ${IMAGE_NAME}:latest
                     sleep 5
                     docker ps
                 """
@@ -41,14 +39,11 @@ pipeline {
 
         stage('Push to DockerHub') {
             steps {
-                echo "Pushing Docker image to DockerHub..."
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                    sh """
-                        echo "$PASS" | docker login -u "$USER" --password-stdin
-                        docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${USER}/${IMAGE_NAME}:${IMAGE_TAG}
-                        docker push ${USER}/${IMAGE_NAME}:${IMAGE_TAG}
-                    """
-                }
+                echo "Pushing image to DockerHub..."
+                sh """
+                    echo "${DOCKERHUB_CREDENTIALS_PSW}" | docker login -u "${DOCKERHUB_CREDENTIALS_USR}" --password-stdin
+                    docker push ${IMAGE_NAME}:latest
+                """
             }
         }
     }
@@ -56,9 +51,7 @@ pipeline {
     post {
         always {
             echo "Cleaning up..."
-            sh "docker rm -f test-${IMAGE_NAME} 2>/dev/null || true"
+            sh "docker rm -f test-kijani || true"
         }
-        success { echo "DockerHub pipeline success!" }
-        failure { echo "Pipeline failed — check logs." }
     }
 }
