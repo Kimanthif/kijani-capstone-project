@@ -74,3 +74,15 @@
   ansible.builtin.dnf:
     autoremove: yes
   when: ansible_os_family == "RedHat"
+
+
+  # PHP INSTALATION
+
+- name: Install PHP and extensions
+  ansible.builtin.dnf:
+    name:
+      - php
+      - php-fpm
+      - php-mysqlnd
+    state: present
+  when: ansible_facts['os_family'] == 'RedHat'
