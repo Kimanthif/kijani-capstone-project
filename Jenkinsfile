@@ -4,7 +4,7 @@ pipeline {
     environment {
         IMAGE_NAME = "kijani-php-nginx"
         IMAGE_TAG  = "latest"
-        DOCKERHUB_USER = "your-dockerhub-username"
+        DOCKERHUB_USER = "felistus"
     }
 
     stages {
