@@ -46,7 +46,7 @@ pipeline {
 
     post {
         always {
-            node {
+            script {
                 echo "Cleaning up test container..."
                 sh "docker rm -f kijani-test || true"
             }
