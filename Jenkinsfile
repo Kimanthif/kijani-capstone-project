@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKERHUB_USER = credentials('dockerhub-username')
         DOCKERHUB_PASS = credentials('dockerhub-password')
-        IMAGE_NAME = "felistus/kijani-php-nginx"
+        IMAGE_NAME     = "felistus/kijani-php-nginx"
         DOCKERFILE_DIR = "docker"
     }
 
@@ -45,11 +45,9 @@ pipeline {
     }
 
     post {
-        always {
-            script {
-                echo "Cleaning up test container..."
-                sh "docker rm -f kijani-test || true"
-            }
+        cleanup {
+            echo "Cleaning up test container..."
+            sh "docker rm -f kijani-test || true"
         }
     }
 }
