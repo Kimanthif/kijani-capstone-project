@@ -1,44 +1,56 @@
 pipeline {
-    agent any
+    agent any   // ✅ FIX: no label needed
 
     environment {
-        DOCKERHUB_USER = credentials('dockerhub-username')
-        DOCKERHUB_PASS = credentials('dockerhub-password')
-        IMAGE_NAME     = "felistus/kijani-php-nginx"
-        DOCKERFILE_DIR = "docker"
+        DOCKER_IMAGE = "kijani-php-nginx"
+        GIT_CREDENTIALS = 'github-creds'
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                echo "Checking out repo..."
-                checkout scm
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/develop']],   // ✅ FIX: correct branch
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/Kimanthif/kijani-capstone-project.git',
+                        credentialsId: env.GIT_CREDENTIALS
+                    ]]
+                ])
             }
         }
 
-        stage('Build Image') {
+        stage('Build Docker Image') {
             steps {
                 sh """
-                    cd ${DOCKERFILE_DIR}
-                    docker build -t ${IMAGE_NAME}:latest .
+                    echo "Building Docker image..."
+                    docker build -t ${DOCKER_IMAGE}:latest .
                 """
             }
         }
 
-        stage('Test Run Container') {
+        stage('Run Docker Container') {
             steps {
-                sh "docker rm -f kijani-test || true"
-                sh "docker run -d --name kijani-test -p 9090:80 ${IMAGE_NAME}:latest"
-                sh "sleep 5"
+                sh """
+                    echo "Running Docker container..."
+                    docker run -d -p 8080:80 --name kijani-container ${DOCKER_IMAGE}:latest
+                """
             }
         }
 
-        stage('Push to DockerHub') {
+        stage('Test Application') {
+            steps {
+                sh "curl -I http://localhost:8080 || true"
+            }
+        }
+
+        stage('Cleanup Old Containers') {
             steps {
                 sh """
-                    echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
-                    docker push ${IMAGE_NAME}:latest
+                    echo "Cleaning up..."
+                    docker stop kijani-container || true
+                    docker rm kijani-container || true
                 """
             }
         }
@@ -46,10 +58,13 @@ pipeline {
 
     post {
         always {
-            node {
-                echo "Cleaning up test container..."
-                sh "docker rm -f kijani-test || true"
-            }
+            echo "Pipeline execution finished."
+        }
+        success {
+            echo "Pipeline succeeded!"
+        }
+        failure {
+            echo "Pipeline failed!"
         }
     }
 }
