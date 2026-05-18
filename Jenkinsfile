@@ -33,15 +33,15 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 sh """
-                    echo "Running Docker container..."
-                    docker run -d -p 8080:80 --name kijani-container ${DOCKER_IMAGE}:latest
+                    docker rm -f kijani-container || true
+                    docker run -d -p 8081:80 --name kijani-container kijani-php-nginx:latest
                 """
             }
         }
 
         stage('Test Application') {
             steps {
-                sh "curl -I http://localhost:8080 || true"
+                sh "curl -I http://localhost:8081 || true"
             }
         }
 
