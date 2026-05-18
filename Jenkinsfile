@@ -2,38 +2,38 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
-        IMAGE_NAME = "kimanthif/kijani-php-nginx"
-        APP_DIR = "kijani-php-nginx"   
+        DOCKERHUB_USER = credentials('dockerhub-username')
+        DOCKERHUB_PASS = credentials('dockerhub-password')
+        IMAGE_NAME = "felistus/kijani-php-nginx"
+        DOCKERFILE_DIR = "docker"  
     }
 
     stages {
 
         stage('Checkout') {
             steps {
-                echo "Pulling source code..."
+                echo "Checking out source code..."
                 checkout scm
+                sh "ls -R ."
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                echo "Building Docker image..."
+                echo "Building Docker image from docker/Dockerfile..."
                 sh """
-                    cd ${APP_DIR}
+                    cd ${DOCKERFILE_DIR}
                     docker build -t ${IMAGE_NAME}:latest .
                 """
             }
         }
 
-        stage('Run Container (Test)') {
+        stage('Test Run') {
             steps {
-                echo "Running test container..."
-                sh """
-                    docker run -d --name test-kijani -p 8081:80 ${IMAGE_NAME}:latest
-                    sleep 5
-                    docker ps
-                """
+                echo "Running container test on port 9090..."
+                sh "docker rm -f kijani-test || true"
+                sh "docker run -d --name kijani-test -p 9090:80 ${IMAGE_NAME}:latest"
+                sh "sleep 5"
             }
         }
 
@@ -41,7 +41,7 @@ pipeline {
             steps {
                 echo "Pushing image to DockerHub..."
                 sh """
-                    echo "${DOCKERHUB_CREDENTIALS_PSW}" | docker login -u "${DOCKERHUB_CREDENTIALS_USR}" --password-stdin
+                    echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
                     docker push ${IMAGE_NAME}:latest
                 """
             }
@@ -50,8 +50,8 @@ pipeline {
 
     post {
         always {
-            echo "Cleaning up..."
-            sh "docker rm -f test-kijani || true"
+            echo "Cleaning up test container..."
+            sh "docker rm -f kijani-test || true"
         }
     }
 }
