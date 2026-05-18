@@ -10,7 +10,7 @@ COPY app/src/ /var/www/html/
 COPY nginx.conf /etc/nginx/sites-available/default
 
 # Copy application code (ONLY if it exists inside docker/app/src)
-COPY app/src/ /var/www/html/
+# COPY app/src/ /var/www/html/
 
 # Copy startup script
 COPY start.sh /start.sh
