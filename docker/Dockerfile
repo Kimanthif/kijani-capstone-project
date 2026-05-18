@@ -7,10 +7,13 @@ RUN apt-get update && apt-get install -y nginx
 COPY app/src/ /var/www/html/
 
 # Copy nginx config
-COPY docker/nginx.conf /etc/nginx/sites-available/default
+COPY nginx.conf /etc/nginx/sites-available/default
+
+# Copy application code (ONLY if it exists inside docker/app/src)
+COPY app/src/ /var/www/html/
 
 # Copy startup script
-COPY docker/start.sh /start.sh
+COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
 # Fix permissions
