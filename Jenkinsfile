@@ -25,7 +25,7 @@ pipeline {
             steps {
                 sh """
                     echo "Building Docker image..."
-                    docker build -t ${DOCKER_IMAGE}:latest -f docker/Dockerfile docker .
+                    docker build -t ${DOCKER_IMAGE}:latest -f docker/Dockerfile .
                 """
             }
         }
