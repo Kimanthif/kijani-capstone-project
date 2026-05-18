@@ -1,0 +1,23 @@
+- name: Create namespace
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ namespace }}"
+
+- name: Deploy application manifests
+  kubernetes.core.k8s:
+    state: present
+    src: ../../k8s/backend-deployment.yml
+
+- name: Deploy payment service
+  kubernetes.core.k8s:
+    state: present
+    src: ../../k8s/payments-deployment.yml
+
+- name: Apply services
+  kubernetes.core.k8s:
+    state: present
+    src: ../../k8s/services.yml

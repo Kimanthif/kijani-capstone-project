@@ -1,0 +1,6 @@
+aws_region: eu-north-1
+cluster_name: kijani-eks-cluster
+namespace: kijani-project
+
+backend_src: "{{ playbook_dir }}/../app/src"
+backend_dest: /var/www/backend

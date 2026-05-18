@@ -1,0 +1,9 @@
+replicas: 2
+log_level: INFO
+environment: staging
+db_host: staging-db.internal
+s3_bucket: kijani-staging-bucket
+
+backend_src: "{{ playbook_dir }}/../app/src"
+backend_dest: /var/www/backend
+target_env: staging

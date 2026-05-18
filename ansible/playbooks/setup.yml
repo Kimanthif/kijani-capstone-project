@@ -1,0 +1,6 @@
+- hosts: ansible_controller
+  become: yes
+  roles:
+    - common
+    - kubernetes
+    - eks_access

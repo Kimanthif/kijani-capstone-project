@@ -1,0 +1,9 @@
+replicas: 1
+log_level: DEBUG
+environment: dev
+db_host: dev-db.internal
+s3_bucket: kijani-dev-bucket
+
+backend_src: "{{ playbook_dir }}/../app/src"
+backend_dest: /var/www/backend
+target_env: dev

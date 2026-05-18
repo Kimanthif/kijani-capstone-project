@@ -1,0 +1,12 @@
+- name: Configure AWS CLI access to EKS cluster
+  shell: >
+    aws eks update-kubeconfig
+    --region {{ aws_region }}
+    --name {{ cluster_name }}
+
+- name: Verify cluster connection
+  command: kubectl get nodes
+  register: nodes
+
+- debug:
+    var: nodes.stdout

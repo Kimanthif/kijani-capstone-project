@@ -1,0 +1,8 @@
+---
+- name: Deploy Kijani Web Stack
+  hosts: all
+  become: yes
+
+  roles:
+    - common
+    - webserver

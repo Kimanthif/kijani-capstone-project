@@ -1,0 +1,36 @@
+- name: Install NGINX
+  ansible.builtin.yum:
+    name: nginx
+    state: present
+
+- name: Enable & Start NGINX
+  ansible.builtin.service:
+    name: nginx
+    enabled: yes
+    state: started
+
+- name: Deploy PHP index file
+  ansible.builtin.copy:
+    src: "{{ backend_src }}/index.php"
+    dest: /var/www/html/index.php
+    owner: nginx
+    group: nginx
+    mode: "0644"
+
+- name: Deploy nginx PHP config
+  ansible.builtin.template:
+    src: php.conf.j2
+    dest: /etc/nginx/conf.d/php.conf
+  notify: restart nginx
+
+- name: Create backend directory
+  ansible.builtin.file:
+    path: "{{ backend_dest }}"
+    state: directory
+    mode: "0755"
+
+- name: Deploy backend PHP app
+  ansible.builtin.copy:
+    src: "{{ backend_src }}/index.php"
+    dest: "{{ backend_dest }}/index.php"
+    mode: "0644"
