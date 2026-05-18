@@ -52,13 +52,13 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-credentials',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
+                    usernameVariable: 'DOCKERHUB_USER',
+                    passwordVariable: 'DOCKERHUB_PASS'
                 )]) {
                     sh """
                         echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-                        docker tag $IMAGE_NAME $DOCKERHUB_REPO:latest
-                        docker push $DOCKERHUB_REPO:latest
+                        docker tag kijani-php-nginx $DOCKERHUB_USER/kijani-php-nginx:latest
+                        docker push $DOCKERHUB_USER/kijani-php-nginx:latest
                     """
                 }
             }
