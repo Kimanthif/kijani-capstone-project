@@ -29,8 +29,11 @@ pipeline {
             steps {
                 echo 'Running container...'
                 sh """
-                    docker rm -f $CONTAINER_NAME || true
-                    docker run -d --name $CONTAINER_NAME -p 8081:80 $IMAGE_NAME
+                    docker run -d \
+                        --name kijani-test \
+                        -p 8081:80 \
+                        $IMAGE_NAME
+                    
                 """
             }
         }
