@@ -57,6 +57,7 @@ pipeline {
                 )]) {
                     sh """
                         echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin
+                        
                         docker tag kijani-php-nginx $DOCKERHUB_USER/kijani-php-nginx:latest
                         docker push $DOCKERHUB_USER/kijani-php-nginx:latest
                     """
