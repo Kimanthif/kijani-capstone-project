@@ -1,5 +1,5 @@
 pipeline {
-    agent any   // ✅ FIX: no label needed
+    agent any   
 
     environment {
         DOCKER_IMAGE = "kijani-php-nginx"
@@ -12,7 +12,7 @@ pipeline {
             steps {
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: '*/develop']],   // ✅ FIX: correct branch
+                    branches: [[name: '*/develop']],  
                     userRemoteConfigs: [[
                         url: 'https://github.com/Kimanthif/kijani-capstone-project.git',
                         credentialsId: env.GIT_CREDENTIALS
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 sh """
                     echo "Building Docker image..."
-                    docker build -t ${DOCKER_IMAGE}:latest .
+                    docker build -t ${DOCKER_IMAGE}:latest -f docker/Dockerfile docker
                 """
             }
         }
