@@ -29,11 +29,11 @@ pipeline {
             steps {
                 echo 'Running container...'
                 sh """
-                    docker run -d \
-                        --name kijani-test \
-                        -p 8081:80 \
-                        $IMAGE_NAME
-                    
+                    echo "Cleaning old container if exists..."
+                    docker rm -f kijani-test || true
+
+                    echo "Running container..."
+                    docker run -d --name kijani-test -p 8081:80 kijani-php-nginx                    
                 """
             }
         }
