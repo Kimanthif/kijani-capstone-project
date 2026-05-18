@@ -46,8 +46,10 @@ pipeline {
 
     post {
         always {
-            echo "Cleaning up test container..."
-            sh "docker rm -f kijani-test || true"
+            node {
+                echo "Cleaning up test container..."
+                sh "docker rm -f kijani-test || true"
+            }
         }
     }
 }
